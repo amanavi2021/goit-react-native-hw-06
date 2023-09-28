@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 import {
   View,
@@ -11,8 +12,10 @@ import {
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
-import { storage } from "../firebase/config";
+import { storage, db } from "../firebase/config";
+import { collection, addDoc } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { selectUser } from "../redux/auth/selectors";
 import PhotoSvg from "../assets/images/photo.svg";
 import TrashSvg from "../assets/images/trash.svg";
 import MagPinSvg from "../assets/images/map-pin.svg";
@@ -22,10 +25,12 @@ export default function CreatePostsScreen() {
   const [cameraRef, setCameraRef] = useState(null);
   const [type, setType] = useState(Camera.Constants.Type.back);
   const [photo, setPhoto] = useState(null);
+  const [photoURL, setPhotoURL] = useState(null);
   const [name, setName] = useState("");
   const [place, setPlace] = useState(null);
   const [latitude, setLatitude] = useState(0);
   const [longitude, setLongitude] = useState(0);
+  const { userId, login } = useSelector(selectUser);
 
   const navigation = useNavigation();
 
@@ -44,13 +49,14 @@ export default function CreatePostsScreen() {
       const { status } = await Location.requestForegroundPermissionsAsync();
       // console.log("status location", status);
       if (status !== "granted") {
-        console.log("Permission to access location was denied");
+        // console.log("Permission to access location was denied");
       }
     })();
   }, []);
 
   const sendPost = async () => {
-    uploadPhotoToServer();
+    // uploadPhotoToServer();
+    uploadPostToServer();
 
     const location = await Location
       .getCurrentPositionAsync
@@ -60,11 +66,11 @@ export default function CreatePostsScreen() {
       // }
       // {}
       ();
-
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
 
-    navigation.navigate("Posts", { photo, name, place, latitude, longitude });
+    // navigation.navigate("Posts", { photo, name, place, latitude, longitude });
+    navigation.navigate("Posts");
   };
 
   const uploadPhotoToServer = async () => {
@@ -73,22 +79,33 @@ export default function CreatePostsScreen() {
     const uniquePostID = Date.now().toString();
     const storageRef = ref(storage, `postImages/${uniquePostID}`);
 
-    await uploadBytes(storageRef, file).then((snapshot) => {
-      console.log("snapshot", snapshot);
-      console.log("Uploaded a blob or file!");
-    });
+    await uploadBytes(storageRef, file).then((snapshot) => {});
     await getDownloadURL(ref(storage, `postImages/${uniquePostID}`))
       .then((url) => {
-        // `url` is the download URL for 'images/stars.jpg'
-        console.log("url", url);
-        // Or inserted into an <img> element
-        // const img = document.getElementById("myimg");
-        // img.setAttribute("src", url);
+        setPhotoURL(url);
       })
       .catch((error) => {
-        // Handle any errors
         console.log("err", error);
       });
+
+    // console.log("photoURL1", photoURL);
+
+    // return photoURL;
+  };
+
+  const uploadPostToServer = async () => {
+    await uploadPhotoToServer();
+    // console.log("current", photoURL);
+    const post = { photoURL, name, place, latitude, longitude, userId, login };
+    //  console.log("photo for upload", photoURL);
+    // console.log("post", post);
+    try {
+      const docRef = await addDoc(collection(db, "posts"), post);
+      console.log("Document written with ID: ", docRef.id);
+    } catch (error) {
+      console.error("Error adding document: ", error);
+      throw error;
+    }
   };
 
   if (hasPermission === null) {
