@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectUserLogin } from "../redux/auth/selectors";
 import {
   StyleSheet,
@@ -11,6 +11,7 @@ import {
   Dimensions,
   TouchableOpacity,
 } from "react-native";
+import { logOutDB } from "../redux/auth/operations";
 import DeleteSvg from "../assets/images/delete.svg";
 import LogOutSvg from "../assets/images/log-out.svg";
 import AvatarImage from "../assets/images/avatar.png";
@@ -18,7 +19,13 @@ import AvatarImage from "../assets/images/avatar.png";
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const login = useSelector(selectUserLogin);
+  const dispatch = useDispatch();
   console.log("Profile  login", login);
+
+  const logOut = () => {
+    dispatch(logOutDB());
+    navigation.navigate("Login");
+  };
 
   return (
     <View style={styles.container}>
@@ -26,10 +33,7 @@ export default function ProfileScreen() {
         <View style={styles.avatarWrapper}>
           <Image style={styles.avatar} source={AvatarImage} />
           <DeleteSvg style={styles.deleteIcon} width={37} height={37} />
-          <TouchableOpacity
-            activeOpacity={0.8}
-            onPress={() => navigation.navigate("Login")}
-          >
+          <TouchableOpacity activeOpacity={0.8} onPress={logOut}>
             <LogOutSvg style={styles.logOutIcon} />
           </TouchableOpacity>
         </View>

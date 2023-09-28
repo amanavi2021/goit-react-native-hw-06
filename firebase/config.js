@@ -9,6 +9,7 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
+  signOut,
 } from "firebase/auth";
 // Функція для підключення бази даних у проект
 import { getFirestore } from "firebase/firestore";
@@ -43,4 +44,5 @@ export const authMethods = {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
+  signOut,
 };

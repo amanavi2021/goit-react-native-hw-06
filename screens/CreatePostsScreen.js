@@ -11,6 +11,8 @@ import {
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
+import { storage } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import PhotoSvg from "../assets/images/photo.svg";
 import TrashSvg from "../assets/images/trash.svg";
 import MagPinSvg from "../assets/images/map-pin.svg";
@@ -26,8 +28,6 @@ export default function CreatePostsScreen() {
   const [longitude, setLongitude] = useState(0);
 
   const navigation = useNavigation();
-
-  // const sendPhoto = () => {};
 
   useEffect(() => {
     (async () => {
@@ -50,26 +50,45 @@ export default function CreatePostsScreen() {
   }, []);
 
   const sendPost = async () => {
+    uploadPhotoToServer();
+
     const location = await Location
       .getCurrentPositionAsync
       // {
       //   accuracy: Location.Accuracy.Highest,
       //   maximumAge: 10000,
       // }
-
       // {}
       ();
-    // console.log("latitude", location.coords.latitude);
-    // console.log("longitude", location.coords.longitude);
+
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
-    // console.log("Sending");
-    // navigation.navigate("DefaultScreen", { photo, name, place });
-    // navigation.navigate("Posts", {
-    //   screen: "DefaultScreen",
-    //   params: { photo, name, place },
-    // });
+
     navigation.navigate("Posts", { photo, name, place, latitude, longitude });
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniquePostID = Date.now().toString();
+    const storageRef = ref(storage, `postImages/${uniquePostID}`);
+
+    await uploadBytes(storageRef, file).then((snapshot) => {
+      console.log("snapshot", snapshot);
+      console.log("Uploaded a blob or file!");
+    });
+    await getDownloadURL(ref(storage, `postImages/${uniquePostID}`))
+      .then((url) => {
+        // `url` is the download URL for 'images/stars.jpg'
+        console.log("url", url);
+        // Or inserted into an <img> element
+        // const img = document.getElementById("myimg");
+        // img.setAttribute("src", url);
+      })
+      .catch((error) => {
+        // Handle any errors
+        console.log("err", error);
+      });
   };
 
   if (hasPermission === null) {

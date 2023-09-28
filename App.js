@@ -25,7 +25,7 @@ export default function App() {
 
   const MainStack = createStackNavigator();
 
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
 
   // authMethods.onAuthStateChanged((user) => console.log("user1", user));
 
@@ -91,7 +91,12 @@ export default function App() {
               name="Map"
               component={MapScreen}
               options={{
-                headerShown: false,
+                title: "Мапа",
+                headerTintColor: "#212121",
+                headerTitleAlign: "center",
+                headerTitleStyle: {
+                  fontSize: 17,
+                },
               }}
             />
           </MainStack.Navigator>

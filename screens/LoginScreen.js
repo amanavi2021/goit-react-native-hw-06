@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -31,6 +31,8 @@ export default function LoginScreen() {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  // const test = useSelector((state) => state);
+  // console.log("test", test);
 
   const handleSubmit = () => {
     keyboardHide();
