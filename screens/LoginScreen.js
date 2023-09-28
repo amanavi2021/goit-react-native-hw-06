@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
+import { loginDB } from "../redux/auth/operations";
 
 const initialState = {
   email: "",
@@ -28,11 +30,14 @@ export default function LoginScreen() {
   const [hasFocusPassword, setHasFocusPassword] = useState(false);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleSubmit = () => {
     keyboardHide();
     console.log("state", state);
+    dispatch(loginDB(state));
     setState(initialState);
+
     navigation.navigate("Home");
   };
 

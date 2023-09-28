@@ -1,5 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useSelector } from "react-redux";
+import { selectUserLogin } from "../redux/auth/selectors";
 import {
   StyleSheet,
   Text,
@@ -15,6 +17,8 @@ import AvatarImage from "../assets/images/avatar.png";
 
 export default function ProfileScreen() {
   const navigation = useNavigation();
+  const login = useSelector(selectUserLogin);
+  console.log("Profile  login", login);
 
   return (
     <View style={styles.container}>
@@ -30,7 +34,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         </View>
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>Natali Romanova</Text>
+          <Text style={styles.headerTitle}>{login}</Text>
         </View>
       </View>
       <ImageBackground

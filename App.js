@@ -1,9 +1,14 @@
 import "react-native-gesture-handler";
-import React from "react";
-import { TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, Text } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
+import { PersistGate } from "redux-persist/integration/react";
+import { Provider } from "react-redux";
+import store from "./redux/store";
+import { authMethods } from "./firebase/config";
+
 import RegistrationScreen from "./screens/RegistrationScreen";
 import LoginScreen from "./screens/LoginScreen";
 import CommentsScreen from "./screens/CommentsScreen";
@@ -20,55 +25,79 @@ export default function App() {
 
   const MainStack = createStackNavigator();
 
+  const [user, setUser] = useState(null);
+
+  // authMethods.onAuthStateChanged((user) => console.log("user1", user));
+
+  // const authStateChanged = async (
+  //   onChange = (user) => {
+  //     setUser(user);
+  //   }
+  // ) => {
+  //   authMethods.onAuthStateChanged((user) => {
+  //     onChange(user);
+  //   });
+  // };
+  // authStateChanged(user);
+  // console.log("authStateChanged", authStateChanged);
+  // console.log("currentUser", user);
+
   if (!fontLoaded) {
     return null;
   }
 
   return (
-    <NavigationContainer>
-      <MainStack.Navigator>
-        <MainStack.Screen
-          name="Registration"
-          component={RegistrationScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <MainStack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <MainStack.Screen
-          name="Home"
-          component={Home}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <MainStack.Screen
-          name="Comments"
-          component={CommentsScreen}
-          options={{
-            title: "Коментарі",
-            headerTintColor: "#212121",
-            headerTitleAlign: "center",
-            headerTitleStyle: {
-              fontSize: 17,
-            },
-          }}
-        />
-        <MainStack.Screen
-          name="Map"
-          component={MapScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-      </MainStack.Navigator>
-    </NavigationContainer>
+    <Provider store={store.store}>
+      <PersistGate
+        loading={<Text>Loading...</Text>}
+        persistor={store.persistor}
+      >
+        <NavigationContainer>
+          <MainStack.Navigator>
+            <MainStack.Screen
+              name="Registration"
+              component={RegistrationScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <MainStack.Screen
+              name="Login"
+              component={LoginScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <MainStack.Screen
+              name="Home"
+              component={Home}
+              options={{
+                headerShown: false,
+              }}
+            />
+            <MainStack.Screen
+              name="Comments"
+              component={CommentsScreen}
+              options={{
+                title: "Коментарі",
+                headerTintColor: "#212121",
+                headerTitleAlign: "center",
+                headerTitleStyle: {
+                  fontSize: 17,
+                },
+              }}
+            />
+            <MainStack.Screen
+              name="Map"
+              component={MapScreen}
+              options={{
+                headerShown: false,
+              }}
+            />
+          </MainStack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
 }
 

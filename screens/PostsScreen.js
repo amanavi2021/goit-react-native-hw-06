@@ -20,7 +20,7 @@ export default function PostsScreen({ route }) {
       setPosts((prevState) => [...prevState, route.params]);
     }
   }, [route.params]);
-  console.log("posts", posts);
+  // console.log("posts", posts);
   return (
     <View style={styles.container}>
       <FlatList

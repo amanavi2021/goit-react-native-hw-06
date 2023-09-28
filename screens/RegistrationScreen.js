@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
+import { useDispatch } from "react-redux";
 import {
   StyleSheet,
   Text,
@@ -14,6 +15,7 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import { registerDB } from "../redux/auth/operations";
 import AddSvg from "../assets/images/add.svg";
 
 const initialState = {
@@ -31,11 +33,14 @@ export default function RegistrationScreen() {
   const [hasFocusPassword, setHasFocusPassword] = useState(false);
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
 
   const handleSubmit = () => {
     keyboardHide();
     console.log("state", state);
+    dispatch(registerDB(state));
     setState(initialState);
+
     navigation.navigate("Home");
   };
 

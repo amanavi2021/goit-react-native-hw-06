@@ -42,7 +42,7 @@ export default function CreatePostsScreen() {
     (async () => {
       // const { status } = await Location.requestBackgroundPermissionsAsync();
       const { status } = await Location.requestForegroundPermissionsAsync();
-      console.log("status location", status);
+      // console.log("status location", status);
       if (status !== "granted") {
         console.log("Permission to access location was denied");
       }
@@ -59,8 +59,8 @@ export default function CreatePostsScreen() {
 
       // {}
       ();
-    console.log("latitude", location.coords.latitude);
-    console.log("longitude", location.coords.longitude);
+    // console.log("latitude", location.coords.latitude);
+    // console.log("longitude", location.coords.longitude);
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
     // console.log("Sending");
