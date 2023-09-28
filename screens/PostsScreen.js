@@ -8,6 +8,8 @@ import {
   FlatList,
   TouchableOpacity,
 } from "react-native";
+import { db } from "../firebase/config";
+import { collection, getDocs } from "firebase/firestore";
 import MapSvg from "../assets/images/map-pin.svg";
 import MessageSvg from "../assets/images/message-circle.svg";
 
@@ -15,12 +17,23 @@ export default function PostsScreen({ route }) {
   const [posts, setPosts] = useState([]);
   const navigation = useNavigation();
 
-  useEffect(() => {
-    if (route.params) {
-      setPosts((prevState) => [...prevState, route.params]);
+  const getAllPosts = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "posts"));
+      snapshot.forEach((doc) => {
+        setPosts((posts) => [...posts, doc.data()]);
+      });
+    } catch (error) {
+      console.log(error);
+      throw error;
     }
-  }, [route.params]);
-  // console.log("posts", posts);
+  };
+
+  useEffect(() => {
+    getAllPosts();
+  }, []);
+
+  // getAllPosts();
   return (
     <View style={styles.container}>
       <FlatList
@@ -28,7 +41,7 @@ export default function PostsScreen({ route }) {
         keyExtractor={(item, index) => index.toString()}
         renderItem={({ item }) => (
           <View style={styles.postWrapper}>
-            <Image source={{ uri: item.photo }} style={styles.photo} />
+            <Image source={{ uri: item.photoURL }} style={styles.photo} />
 
             <Text style={styles.photoTitle}>{item.name}</Text>
             <View style={styles.infoWrapper}>
