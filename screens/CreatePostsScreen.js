@@ -69,8 +69,7 @@ export default function CreatePostsScreen() {
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
 
-    // navigation.navigate("Posts", { photo, name, place, latitude, longitude });
-    navigation.navigate("Posts");
+    navigation.navigate("Default");
   };
 
   const uploadPhotoToServer = async () => {
@@ -87,15 +86,10 @@ export default function CreatePostsScreen() {
       .catch((error) => {
         console.log("err", error);
       });
-
-    // console.log("photoURL1", photoURL);
-
-    // return photoURL;
   };
 
   const uploadPostToServer = async () => {
     await uploadPhotoToServer();
-    // console.log("current", photoURL);
     if (photoURL) {
       const post = {
         photoURL,
@@ -106,8 +100,7 @@ export default function CreatePostsScreen() {
         userId,
         login,
       };
-      //  console.log("photo for upload", photoURL);
-      // console.log("post", post);
+
       try {
         const docRef = await addDoc(collection(db, "posts"), post);
         console.log("Document written with ID: ", docRef.id);
@@ -163,20 +156,12 @@ export default function CreatePostsScreen() {
               width={24}
               height={24}
             />
-            {/* </View> */}
           </TouchableOpacity>
         </View>
       </Camera>
-
-      {/* <View style={styles.photoWrapper}> */}
-      {/* <Image style={styles.photo} /> */}
       <Text style={styles.photoTitle}>
         {photo ? "Редагувати фото" : "Завантажте фото"}
       </Text>
-      {/* <View style={styles.iconWrapper}>
-        <PhotoSvg fill={"#BDBDBD"} width={24} height={24} />
-      </View> */}
-      {/* </View> */}
 
       <View style={styles.form}>
         <View>
@@ -229,25 +214,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#fff",
-    // justifyContent: "flex-end",
     paddingLeft: 16,
     paddingRight: 16,
-    // paddingTop: 32,
   },
   camera: {
-    // flex: 1,
     height: 240,
     marginTop: 20,
     alignItems: "center",
-    // justifyContent: "center",
-    // marginHorizontal: 16,
   },
 
   photoView: {
     flex: 1,
-    // backgroundColor: "transparent",
-    // backfaceVisibility: "blue",
-
     justifyContent: "flex-end",
     borderRadius: 8,
     borderColor: "#E8E8E8",

@@ -87,8 +87,6 @@ export default function CommentsScreen({ route }) {
           placeholder="Коментувати..."
           placeholderTextColor={"#BDBDBD"}
           value={comment}
-          // onFocus={() => handleFocusEmail()}
-          // onBlur={() => setHasFocusEmail(false)}
           onChangeText={setComment}
         />
         <TouchableOpacity activeOpacity={0.8} onPress={createComment}>

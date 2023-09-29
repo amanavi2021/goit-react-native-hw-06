@@ -33,7 +33,6 @@ export default function DefaultScreen({ route }) {
     getAllPosts();
   }, []);
 
-  // getAllPosts();
   return (
     <View style={styles.container}>
       <FlatList
