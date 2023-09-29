@@ -23,12 +23,10 @@ export default function CommentsScreen({ route }) {
 
   useEffect(() => {
     getAllComments();
-    console.log("allComments", allComments);
   }, []);
 
   const getAllComments = async () => {
     const docRef = doc(db, "posts", postId);
-    //  const docSnap = await getDoc(docRef);
     try {
       const snapshot = await getDocs(
         collection(db, `posts/${docRef.id}/comments`)
@@ -49,19 +47,18 @@ export default function CommentsScreen({ route }) {
     const docRef = doc(db, "posts", postId);
     const docSnap = await getDoc(docRef);
     const newComment = { comment, login };
-    // console.log("login", login);
+
     if (docSnap.exists()) {
-      console.log("Document data:", docSnap.data());
       const commentRef = addDoc(
         collection(db, `posts/${docRef.id}/comments`),
         newComment
       );
     } else {
-      // docSnap.data() will be undefined in this case
       console.log("No such document!");
     }
 
     setAllComments((prevComments) => [...prevComments, newComment]);
+    setComment("");
   };
 
   return (
@@ -69,7 +66,6 @@ export default function CommentsScreen({ route }) {
       <View style={styles.takePhotoContainer}>
         <Image source={{ uri: photo }} style={styles.image} />
       </View>
-      {/*  */}
       <FlatList
         data={allComments}
         keyExtractor={(item, index) => index.toString()}
@@ -82,9 +78,6 @@ export default function CommentsScreen({ route }) {
           </View>
         )}
       />
-
-      {/*  */}
-
       <View style={styles.inputWrapper}>
         <TextInput
           style={{
@@ -93,7 +86,7 @@ export default function CommentsScreen({ route }) {
           }}
           placeholder="Коментувати..."
           placeholderTextColor={"#BDBDBD"}
-          // value={state.email}
+          value={comment}
           // onFocus={() => handleFocusEmail()}
           // onBlur={() => setHasFocusEmail(false)}
           onChangeText={setComment}
@@ -113,7 +106,6 @@ const styles = StyleSheet.create({
     justifyContent: "flex-end",
     paddingLeft: 16,
     paddingRight: 16,
-    // paddingTop: 32,
   },
   image: {
     height: 240,
@@ -133,13 +125,9 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-Regular",
   },
   btnIcon: {
-    // display: "flex",
     position: "absolute",
     bottom: 8,
     right: 16,
-    // fontFamily: "Roboto-Medium",
-    // fontSize: 16,
-    // color: "#1B4371",
   },
   inputWrapper: {
     position: "relative",
