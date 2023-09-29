@@ -48,11 +48,8 @@ export default function RegistrationScreen() {
         onChange(user);
       });
     };
-    // console.log("authStateChanged", user);
 
     setState(initialState);
-
-    // console.log("userId", userId);
   };
 
   const keyboardHide = () => {

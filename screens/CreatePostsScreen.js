@@ -252,16 +252,12 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     borderColor: "#E8E8E8",
     borderWidth: 1,
-    // backgroundColor: "#F6F6F6",
     width: "100%",
   },
   takePhotoContainer: {
     position: "absolute",
     top: 0,
-    // left: 10,
-    // borderColor: "red",
-    // borderWidth: 2,
-    // zIndex: 100,
+
     width: "100%",
   },
 
@@ -274,13 +270,12 @@ const styles = StyleSheet.create({
   iconWrapper: {
     position: "absolute",
     bottom: 90,
-    // left: 150,
     position: "relative",
     alignSelf: "center",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: photo ? "rgba(225,225,225,0.3)" : "#FFF",
+
     width: 60,
     height: 60,
     borderRadius: 60,
@@ -289,9 +284,6 @@ const styles = StyleSheet.create({
     marginTop: 32,
   },
   input: {
-    // borderWidth: 1,
-
-    // backgroundColor: "#F6F6F6",
     height: 50,
     paddingTop: 16,
     paddingBottom: 16,
@@ -307,14 +299,12 @@ const styles = StyleSheet.create({
     marginTop: 43,
     justifyContent: "center",
     alignItems: "center",
-    // backgroundColor: "#F6F6F6",
     borderColor: "transparent",
   },
   btnTitle: {
     marginHorizontal: 20,
     fontSize: 16,
     fontFamily: "Roboto-Regular",
-    // color: "#BDBDBD",
   },
   trashSvgWrapper: {
     display: "flex",

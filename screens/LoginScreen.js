@@ -31,16 +31,12 @@ export default function LoginScreen() {
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  // const test = useSelector((state) => state);
-  // console.log("test", test);
 
   const handleSubmit = () => {
     keyboardHide();
     console.log("state", state);
     dispatch(loginDB(state));
     setState(initialState);
-
-    // navigation.navigate("Home");
   };
 
   const keyboardHide = () => {

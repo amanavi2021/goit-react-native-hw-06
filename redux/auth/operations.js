@@ -15,32 +15,13 @@ export const registerDB =
   ({ login, email, password }) =>
   async (dispatch, getState) => {
     try {
-      // console.log("auth", auth);
-      try {
-        const newUser = await authMethods.createUserWithEmailAndPassword(
-          auth,
-          email,
-          password
-        );
-      } catch (error) {
-        throw error.message;
-      }
-      // await authMethods.createUserWithEmailAndPassword(auth, email, password);
-      // if (newUser) {
-      const user = await auth.currentUser;
+      await createUserWithEmailAndPassword(auth, email, password);
 
-      // console.log("current", user);
+      const user = await auth.currentUser;
 
       await authMethods.updateProfile(user, { displayName: login });
 
       const { uid, displayName } = await auth.currentUser;
-      // console.log("upload", upload);
-
-      // user.updateProfile({
-      //   displayName: login,
-      // });
-
-      // const { uid, displayName } = auth.currentUser;
 
       await dispatch(
         updateUserProfile({
@@ -48,24 +29,10 @@ export const registerDB =
           login: displayName,
         })
       );
-      // }
-
-      // console.log("current user", {
-      //   userId: uid,
-      //   login: displayName,
-      // });
-      // console.log("user.uid", );
     } catch (error) {
-      // console.log("error.message", error.message);
       throw error.message;
     }
   };
-
-// export const authStateChanged = async (onChange = () => {}) => {
-//   authMethods.onAuthStateChanged((user) => {
-//     onChange(user);
-//   });
-// };
 
 export const loginDB =
   ({ email, password }) =>
@@ -76,7 +43,6 @@ export const loginDB =
         email,
         password
       );
-      // console.log("credential", credentials.user);
       const { uid, displayName } = credentials.user;
       await dispatch(
         updateUserProfile({
@@ -92,16 +58,12 @@ export const loginDB =
   };
 
 export const logOutDB = () => async (dispatch, getState) => {
-  // await authMethods.signOut();
   dispatch(authSignOut());
 };
 
 export const authStateChanged = () => async (dispatch, getState) => {
-  // const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
-    // onChange(user);
     if (user) {
-      // console.log("usser", user);
       dispatch(
         updateUserProfile({
           userId: user.uid,
