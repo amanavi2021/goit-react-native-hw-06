@@ -23,6 +23,7 @@ import MessageSvg from "../assets/images/message-circle.svg";
 
 export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
+  const [commentsCount, setCommentsCount] = useState([]);
   const navigation = useNavigation();
   const login = useSelector(selectUserLogin);
   const dispatch = useDispatch();
@@ -35,12 +36,49 @@ export default function ProfileScreen() {
     try {
       const snapshot = await getDocs(collection(db, "posts"));
       snapshot.forEach((doc) => {
-        setPosts((posts) => [...posts, { ...doc.data(), id: doc.id }]);
+        getAllCommentsCount(doc.id);
+        // console.log("commentsCount", commentsCount);
+        setPosts((posts) => [
+          ...posts,
+          { ...doc.data(), id: doc.id, count: commentsCount },
+        ]);
       });
+      // console.log("sum", commentsCount);
     } catch (error) {
       console.log(error);
       throw error;
     }
+  };
+
+  const getAllCommentsCount = async (id) => {
+    let comments = [];
+    try {
+      const snapshot = await getDocs(collection(db, `posts/${id}/comments`));
+      snapshot.forEach((doc) => {
+        comments.push({ ...doc.data() });
+      });
+      await setCommentsCount((prevState) => [
+        ...prevState,
+        {
+          id,
+          count: comments.length,
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+    // console.log("comments", comments);
+    // console.log("length", comments.length);
+  };
+
+  const getCount = (id) => {
+    const findingPost = commentsCount.find((post) => post.id === `${id}`);
+    if (findingPost) {
+      return findingPost.count;
+    }
+    return 0;
+    // return commentsCount.find((post) => post.id === `${id}`).count;
   };
 
   useEffect(() => {
@@ -74,6 +112,7 @@ export default function ProfileScreen() {
             <Image source={{ uri: item.photoURL }} style={styles.photo} />
 
             <Text style={styles.photoTitle}>{item.name}</Text>
+
             <View style={styles.infoWrapper}>
               <View style={styles.commentWrapper}>
                 <TouchableOpacity
@@ -85,10 +124,16 @@ export default function ProfileScreen() {
                     })
                   }
                 >
-                  <MessageSvg />
+                  <MessageSvg
+                    fill={getCount(item.id) ? "#FF6C00" : "transparent"}
+                    // stroke={getCount(item.id) ? "#FF6C00" : "transparent"}
+                  />
                 </TouchableOpacity>
 
-                <Text style={styles.commentsCount}>0</Text>
+                <Text style={styles.commentsCount}>
+                  {getCount(item.id)}
+                  {/* {commentsCount.find((post) => post.id === `${item.id}`).count} */}
+                </Text>
               </View>
               <View style={styles.locationWrapper}>
                 <TouchableOpacity
