@@ -5,17 +5,20 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { useFonts } from "expo-font";
 import { PersistGate } from "redux-persist/integration/react";
-import { Provider } from "react-redux";
+import { Provider, useSelector } from "react-redux";
 import store from "./redux/store";
 import { authMethods } from "./firebase/config";
 
 import RegistrationScreen from "./screens/RegistrationScreen";
 import LoginScreen from "./screens/LoginScreen";
-import CommentsScreen from "./screens/CommentsScreen";
-import MapScreen from "./screens/MapScreen";
+import CommentsScreen from "./screens/nestedScreens/CommentsScreen";
+import MapScreen from "./screens/nestedScreens/MapScreen";
 // import PostsScreen from "./screens/PostsScreen";
-import Home from "./screens/Home";
+// import Home from "./screens/Home";
+import { selectUser } from "./redux/auth/selectors";
 // import AddSvg from "./assets/images/add.svg";
+import useRoute from "./useRoute";
+import Main from "./Main";
 
 export default function App() {
   const [fontLoaded] = useFonts({
@@ -23,24 +26,11 @@ export default function App() {
     "Roboto-Medium": require("./assets/fonts/Roboto-Medium.ttf"),
   });
 
-  const MainStack = createStackNavigator();
+  // const { user } = useSelector(selectUser);
 
-  // const [user, setUser] = useState(null);
-
-  // authMethods.onAuthStateChanged((user) => console.log("user1", user));
-
-  // const authStateChanged = async (
-  //   onChange = (user) => {
-  //     setUser(user);
-  //   }
-  // ) => {
-  //   authMethods.onAuthStateChanged((user) => {
-  //     onChange(user);
-  //   });
-  // };
-  // authStateChanged(user);
-  // console.log("authStateChanged", authStateChanged);
-  // console.log("currentUser", user);
+  // const MainStack = createStackNavigator();
+  // const AuthStack = createStackNavigator();
+  // const routing = useRoute(true);
 
   if (!fontLoaded) {
     return null;
@@ -52,8 +42,12 @@ export default function App() {
         loading={<Text>Loading...</Text>}
         persistor={store.persistor}
       >
-        <NavigationContainer>
-          <MainStack.Navigator>
+        <Main />
+        {/* <Text>Text</Text> */}
+
+        {/* <NavigationContainer>
+          {routing} */}
+        {/* <MainStack.Navigator>
             <MainStack.Screen
               name="Registration"
               component={RegistrationScreen}
@@ -67,15 +61,15 @@ export default function App() {
               options={{
                 headerShown: false,
               }}
-            />
-            <MainStack.Screen
+            /> */}
+        {/* <MainStack.Screen
               name="Home"
               component={Home}
               options={{
                 headerShown: false,
               }}
-            />
-            <MainStack.Screen
+            /> */}
+        {/* <MainStack.Screen
               name="Comments"
               component={CommentsScreen}
               options={{
@@ -86,8 +80,8 @@ export default function App() {
                   fontSize: 17,
                 },
               }}
-            />
-            <MainStack.Screen
+            /> */}
+        {/* <MainStack.Screen
               name="Map"
               component={MapScreen}
               options={{
@@ -98,18 +92,18 @@ export default function App() {
                   fontSize: 17,
                 },
               }}
-            />
-          </MainStack.Navigator>
-        </NavigationContainer>
+            /> */}
+        {/* </MainStack.Navigator> */}
+        {/* </NavigationContainer> */}
       </PersistGate>
     </Provider>
   );
 }
 
-const styles = StyleSheet.create({
-  arrowSvg: {
-    position: "absolute",
-    left: -370,
-    top: -12,
-  },
-});
+// const styles = StyleSheet.create({
+//   arrowSvg: {
+//     position: "absolute",
+//     left: -370,
+//     top: -12,
+//   },
+// });

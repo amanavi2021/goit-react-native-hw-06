@@ -96,15 +96,25 @@ export default function CreatePostsScreen() {
   const uploadPostToServer = async () => {
     await uploadPhotoToServer();
     // console.log("current", photoURL);
-    const post = { photoURL, name, place, latitude, longitude, userId, login };
-    //  console.log("photo for upload", photoURL);
-    // console.log("post", post);
-    try {
-      const docRef = await addDoc(collection(db, "posts"), post);
-      console.log("Document written with ID: ", docRef.id);
-    } catch (error) {
-      console.error("Error adding document: ", error);
-      throw error;
+    if (photoURL) {
+      const post = {
+        photoURL,
+        name,
+        place,
+        latitude,
+        longitude,
+        userId,
+        login,
+      };
+      //  console.log("photo for upload", photoURL);
+      // console.log("post", post);
+      try {
+        const docRef = await addDoc(collection(db, "posts"), post);
+        console.log("Document written with ID: ", docRef.id);
+      } catch (error) {
+        console.error("Error adding document: ", error);
+        throw error;
+      }
     }
   };
 

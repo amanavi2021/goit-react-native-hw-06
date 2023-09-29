@@ -2,10 +2,10 @@ import React from "react";
 import { View, StyleSheet, TouchableOpacity } from "react-native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { useNavigation } from "@react-navigation/native";
+
 import PostsScreen from "./PostsScreen";
 import CreatePostsScreen from "./CreatePostsScreen";
 import ProfileScreen from "./ProfileScreen";
-import LogOutSvg from "../assets/images/log-out.svg";
 import GridSvg from "../assets/images/grid.svg";
 import UserSvg from "../assets/images/user.svg";
 import UnionSvg from "../assets/images/union.svg";
@@ -15,6 +15,7 @@ const Tabs = createBottomTabNavigator();
 
 export default function Home() {
   const navigation = useNavigation();
+
   return (
     <Tabs.Navigator
       screenOptions={({ route }) => ({
@@ -46,21 +47,7 @@ export default function Home() {
         name="Posts"
         component={PostsScreen}
         options={{
-          title: "Публікації",
-          headerTintColor: "#212121",
-          headerTitleAlign: "center",
-          headerTitleStyle: {
-            fontSize: 17,
-          },
-          headerRight: () => (
-            <TouchableOpacity
-              style={{ position: "relative" }}
-              activeOpacity={0.8}
-              onPress={() => navigation.navigate("Login")}
-            >
-              <LogOutSvg style={styles.logOutSvg} width={25} height={25} />
-            </TouchableOpacity>
-          ),
+          headerShown: false,
         }}
       />
       <Tabs.Screen

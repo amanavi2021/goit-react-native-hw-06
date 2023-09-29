@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectUser } from "../redux/auth/selectors";
 import {
   StyleSheet,
   Text,
@@ -16,6 +17,7 @@ import {
   Dimensions,
 } from "react-native";
 import { registerDB } from "../redux/auth/operations";
+import { onAuthStateChanged } from "firebase/auth";
 import AddSvg from "../assets/images/add.svg";
 
 const initialState = {
@@ -31,17 +33,26 @@ export default function RegistrationScreen() {
   const [hasFocusLogin, setHasFocusLogin] = useState(false);
   const [hasFocusEmail, setHasFocusEmail] = useState(false);
   const [hasFocusPassword, setHasFocusPassword] = useState(false);
+  const [user, setUser] = useState(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
+  const { userId } = useSelector(selectUser);
 
   const handleSubmit = () => {
     keyboardHide();
-    console.log("state", state);
     dispatch(registerDB(state));
+
+    const authStateChanged = async (onChange = () => {}) => {
+      onAuthStateChanged(async (user) => {
+        onChange(user);
+      });
+    };
+    // console.log("authStateChanged", user);
+
     setState(initialState);
 
-    navigation.navigate("Home");
+    // console.log("userId", userId);
   };
 
   const keyboardHide = () => {

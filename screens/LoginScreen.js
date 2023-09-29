@@ -40,7 +40,7 @@ export default function LoginScreen() {
     dispatch(loginDB(state));
     setState(initialState);
 
-    navigation.navigate("Home");
+    // navigation.navigate("Home");
   };
 
   const keyboardHide = () => {

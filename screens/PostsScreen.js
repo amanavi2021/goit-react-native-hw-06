@@ -1,132 +1,215 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
-import {
-  View,
-  Text,
-  Image,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
-import { db } from "../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
-import MapSvg from "../assets/images/map-pin.svg";
-import MessageSvg from "../assets/images/message-circle.svg";
+import { TouchableOpacity, StyleSheet } from "react-native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { useDispatch } from "react-redux";
+import { logOutDB } from "../redux/auth/operations";
+import MapScreen from "./nestedScreens/MapScreen";
+import CommentsScreen from "./nestedScreens/CommentsScreen";
+import DefaultScreen from "./nestedScreens/DefaultScreen";
+import LogOutSvg from "../assets/images/log-out.svg";
+
+const NestedScreen = createStackNavigator();
 
 export default function PostsScreen({ route }) {
-  const [posts, setPosts] = useState([]);
-  const navigation = useNavigation();
+  const dispatch = useDispatch();
 
-  const getAllPosts = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "posts"));
-      snapshot.forEach((doc) => {
-        setPosts((posts) => [...posts, doc.data()]);
-      });
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+  const logOut = () => {
+    dispatch(logOutDB());
   };
 
-  useEffect(() => {
-    getAllPosts();
-  }, []);
-
-  // getAllPosts();
   return (
-    <View style={styles.container}>
-      <FlatList
-        data={posts}
-        keyExtractor={(item, index) => index.toString()}
-        renderItem={({ item }) => (
-          <View style={styles.postWrapper}>
-            <Image source={{ uri: item.photoURL }} style={styles.photo} />
+    <NestedScreen.Navigator>
+      <NestedScreen.Screen
+        name="Default"
+        component={DefaultScreen}
+        options={{
+          title: "Публікації",
+          headerTintColor: "#212121",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 17,
+          },
 
-            <Text style={styles.photoTitle}>{item.name}</Text>
-            <View style={styles.infoWrapper}>
-              <View style={styles.commentWrapper}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() => navigation.navigate("Comments")}
-                >
-                  <MessageSvg />
-                </TouchableOpacity>
-
-                <Text style={styles.commentsCount}>0</Text>
-              </View>
-              <View style={styles.locationWrapper}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() =>
-                    navigation.navigate("Map", {
-                      latitude: item.latitude,
-                      longitude: item.longitude,
-                    })
-                  }
-                >
-                  <MapSvg />
-                </TouchableOpacity>
-                <Text style={styles.location}>{item.place}</Text>
-              </View>
-            </View>
-          </View>
-        )}
+          headerRight: () => (
+            <TouchableOpacity
+              style={{ position: "relative" }}
+              activeOpacity={0.8}
+              onPress={logOut}
+            >
+              <LogOutSvg style={styles.logOutSvg} width={25} height={25} />
+            </TouchableOpacity>
+          ),
+        }}
       />
-    </View>
+      <NestedScreen.Screen
+        name="Comments"
+        component={CommentsScreen}
+        options={{
+          title: "Коментарі",
+          headerTintColor: "#212121",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 17,
+          },
+        }}
+      />
+      <NestedScreen.Screen
+        name="Map"
+        component={MapScreen}
+        options={{
+          title: "Мапа",
+          headerTintColor: "#212121",
+          headerTitleAlign: "center",
+          headerTitleStyle: {
+            fontSize: 17,
+          },
+        }}
+      />
+    </NestedScreen.Navigator>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#fff",
-    paddingLeft: 16,
-    paddingRight: 16,
-  },
-  postWrapper: {
-    marginBottom: 10,
-    marginTop: 32,
-    justifyContent: "center",
-  },
-
-  photo: {
-    height: 240,
-    borderRadius: 8,
-  },
-
-  photoTitle: {
-    marginTop: 8,
-    fontFamily: "Roboto-Medium",
-    fontSize: 16,
-    color: "#212121",
-  },
-  infoWrapper: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginTop: 8,
-  },
-  locationWrapper: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 4,
-  },
-  location: {
-    fontSize: 16,
-    fontFamily: "Roboto-Regular",
-    color: "#212121",
-    textDecorationStyle: "dashed",
-    textDecorationLine: "underline",
-  },
-  commentWrapper: {
-    display: "flex",
-    flexDirection: "row",
-    gap: 6,
-  },
-  commentsCount: {
-    fontSize: 16,
-    fontFamily: "Roboto-Regular",
-    color: "#BDBDBD",
+  logOutSvg: {
+    position: "absolute",
+    right: 16,
+    top: -16,
   },
 });
+
+// import { useNavigation } from "@react-navigation/native";
+// import {
+//   View,
+//   Text,
+//   Image,
+//   StyleSheet,
+//   FlatList,
+//   TouchableOpacity,
+// } from "react-native";
+// import { db } from "../firebase/config";
+// import { collection, getDocs } from "firebase/firestore";
+// import MapSvg from "../assets/images/map-pin.svg";
+// import MessageSvg from "../assets/images/message-circle.svg";
+
+// export default function PostsScreen({ route }) {
+//   const [posts, setPosts] = useState([]);
+//   const navigation = useNavigation();
+
+//   const getAllPosts = async () => {
+//     try {
+//       const snapshot = await getDocs(collection(db, "posts"));
+//       snapshot.forEach((doc) => {
+//         setPosts((posts) => [...posts, { ...doc.data(), id: doc.id }]);
+//       });
+//     } catch (error) {
+//       console.log(error);
+//       throw error;
+//     }
+//   };
+
+//   useEffect(() => {
+//     getAllPosts();
+//   }, []);
+
+//   // getAllPosts();
+//   return (
+//     <View style={styles.container}>
+//       <FlatList
+//         data={posts}
+//         keyExtractor={(item, index) => index.toString()}
+//         renderItem={({ item }) => (
+//           <View style={styles.postWrapper}>
+//             <Image source={{ uri: item.photoURL }} style={styles.photo} />
+
+//             <Text style={styles.photoTitle}>{item.name}</Text>
+//             <View style={styles.infoWrapper}>
+//               <View style={styles.commentWrapper}>
+//                 <TouchableOpacity
+//                   activeOpacity={0.8}
+//                   onPress={() =>
+//                     navigation.navigate("Comments", {
+//                       postId: item.id,
+//                       photo: item.photoURL,
+//                     })
+//                   }
+//                 >
+//                   <MessageSvg />
+//                 </TouchableOpacity>
+
+//                 <Text style={styles.commentsCount}>0</Text>
+//               </View>
+//               <View style={styles.locationWrapper}>
+//                 <TouchableOpacity
+//                   activeOpacity={0.8}
+//                   onPress={() =>
+//                     navigation.navigate("Map", {
+//                       latitude: item.latitude,
+//                       longitude: item.longitude,
+//                     })
+//                   }
+//                 >
+//                   <MapSvg />
+//                 </TouchableOpacity>
+//                 <Text style={styles.location}>{item.place}</Text>
+//               </View>
+//             </View>
+//           </View>
+//         )}
+//       />
+//     </View>
+//   );
+// }
+
+// const styles = StyleSheet.create({
+//   container: {
+//     flex: 1,
+//     backgroundColor: "#fff",
+//     paddingLeft: 16,
+//     paddingRight: 16,
+//   },
+//   postWrapper: {
+//     marginBottom: 10,
+//     marginTop: 32,
+//     justifyContent: "center",
+//   },
+
+//   photo: {
+//     height: 240,
+//     borderRadius: 8,
+//   },
+
+//   photoTitle: {
+//     marginTop: 8,
+//     fontFamily: "Roboto-Medium",
+//     fontSize: 16,
+//     color: "#212121",
+//   },
+//   infoWrapper: {
+//     display: "flex",
+//     flexDirection: "row",
+//     justifyContent: "space-between",
+//     marginTop: 8,
+//   },
+//   locationWrapper: {
+//     display: "flex",
+//     flexDirection: "row",
+//     gap: 4,
+//   },
+//   location: {
+//     fontSize: 16,
+//     fontFamily: "Roboto-Regular",
+//     color: "#212121",
+//     textDecorationStyle: "dashed",
+//     textDecorationLine: "underline",
+//   },
+//   commentWrapper: {
+//     display: "flex",
+//     flexDirection: "row",
+//     gap: 6,
+//   },
+//   commentsCount: {
+//     fontSize: 16,
+//     fontFamily: "Roboto-Regular",
+//     color: "#BDBDBD",
+//   },
+// });

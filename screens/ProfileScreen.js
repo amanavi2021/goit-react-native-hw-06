@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserLogin } from "../redux/auth/selectors";
+import { selectUserLogin, selectUser } from "../redux/auth/selectors";
 import {
   StyleSheet,
   Text,
@@ -19,12 +19,13 @@ import AvatarImage from "../assets/images/avatar.png";
 export default function ProfileScreen() {
   const navigation = useNavigation();
   const login = useSelector(selectUserLogin);
+  const data = useSelector(selectUserLogin);
   const dispatch = useDispatch();
-  console.log("Profile  login", login);
+  console.log("Profile  login", data);
 
   const logOut = () => {
     dispatch(logOutDB());
-    navigation.navigate("Login");
+    // navigation.navigate("Login");
   };
 
   return (
