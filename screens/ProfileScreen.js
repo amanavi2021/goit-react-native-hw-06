@@ -20,6 +20,8 @@ import LogOutSvg from "../assets/images/log-out.svg";
 import AvatarImage from "../assets/images/avatar.png";
 import MapSvg from "../assets/images/map-pin.svg";
 import MessageSvg from "../assets/images/message-circle.svg";
+import ThumbSvg from "../assets/images/thumbs-up.svg";
+import ThumbActiveSvg from "../assets/images/thumbs-up-active.svg";
 
 export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
@@ -40,7 +42,7 @@ export default function ProfileScreen() {
         // console.log("commentsCount", commentsCount);
         setPosts((posts) => [
           ...posts,
-          { ...doc.data(), id: doc.id, count: commentsCount },
+          { ...doc.data(), id: doc.id, likes: 0 },
         ]);
       });
       // console.log("sum", commentsCount);
@@ -114,27 +116,42 @@ export default function ProfileScreen() {
             <Text style={styles.photoTitle}>{item.name}</Text>
 
             <View style={styles.infoWrapper}>
-              <View style={styles.commentWrapper}>
-                <TouchableOpacity
-                  activeOpacity={0.8}
-                  onPress={() =>
-                    navigation.navigate("Comments", {
-                      postId: item.id,
-                      photo: item.photoURL,
-                    })
-                  }
-                >
-                  <MessageSvg
-                    fill={getCount(item.id) ? "#FF6C00" : "transparent"}
-                    // stroke={getCount(item.id) ? "#FF6C00" : "transparent"}
-                  />
-                </TouchableOpacity>
-
-                <Text style={styles.commentsCount}>
-                  {getCount(item.id)}
-                  {/* {commentsCount.find((post) => post.id === `${item.id}`).count} */}
-                </Text>
+              <View style={styles.groupWrapper}>
+                <View style={styles.commentWrapper}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    onPress={() =>
+                      navigation.navigate("Comments", {
+                        postId: item.id,
+                        photo: item.photoURL,
+                      })
+                    }
+                  >
+                    <MessageSvg
+                      fill={getCount(item.id) ? "#FF6C00" : "transparent"}
+                      // stroke={getCount(item.id) ? "#FF6C00" : "transparent"}
+                    />
+                  </TouchableOpacity>
+                  <Text style={styles.commentsCount}>{getCount(item.id)}</Text>
+                </View>
+                {/*  */}
+                <View style={styles.commentWrapper}>
+                  <TouchableOpacity
+                    activeOpacity={0.8}
+                    // onPress={() =>
+                    //   navigation.navigate("Comments", {
+                    //     postId: item.id,
+                    //     photo: item.photoURL,
+                    //   })
+                    // }
+                  >
+                    {true ? <ThumbActiveSvg /> : <ThumbSvg />}
+                  </TouchableOpacity>
+                  <Text style={styles.commentsCount}>{item.likes}</Text>
+                </View>
               </View>
+              {/*  */}
+
               <View style={styles.locationWrapper}>
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -242,6 +259,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     marginTop: 8,
   },
+  groupWrapper: {
+    flexDirection: "row",
+    gap: 24,
+  },
   locationWrapper: {
     display: "flex",
     flexDirection: "row",
@@ -262,6 +283,6 @@ const styles = StyleSheet.create({
   commentsCount: {
     fontSize: 16,
     fontFamily: "Roboto-Regular",
-    color: "#BDBDBD",
+    color: "#212121",
   },
 });
