@@ -5,7 +5,7 @@ import RegistrationScreen from "./screens/RegistrationScreen";
 import LoginScreen from "./screens/LoginScreen";
 
 import Home from "./screens/Home";
-
+import PostsScreen from "./screens/PostsScreen";
 export default function useRoute(isAuth) {
   const AuthStack = createStackNavigator();
   if (!isAuth) {
@@ -28,5 +28,5 @@ export default function useRoute(isAuth) {
       </AuthStack.Navigator>
     );
   }
-  return <Home />;
+  return <PostsScreen />;
 }

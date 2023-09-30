@@ -12,21 +12,28 @@ import {
 import { auth } from "../../firebase/config";
 
 export const registerDB =
-  ({ login, email, password }) =>
+  ({ login, email, password, photoURL }) =>
   async (dispatch, getState) => {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
 
       const user = await auth.currentUser;
 
-      await authMethods.updateProfile(user, { displayName: login });
+      await authMethods.updateProfile(user, {
+        displayName: login,
+        photoURL: photoURL,
+      });
+
+      // console.log("photo reg", photoURL);
 
       const { uid, displayName } = await auth.currentUser;
+      // console.log("auth", auth.currentUser);
 
       await dispatch(
         updateUserProfile({
           userId: uid,
           login: displayName,
+          photo: photoURL,
         })
       );
     } catch (error) {
@@ -44,6 +51,7 @@ export const loginDB =
         password
       );
       const { uid, displayName } = credentials.user;
+      console.log("credentials", credentials.user);
       await dispatch(
         updateUserProfile({
           userId: uid,

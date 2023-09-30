@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserLogin, selectUser } from "../redux/auth/selectors";
+import { selectUser } from "../redux/auth/selectors";
 import {
   StyleSheet,
   Text,
@@ -14,7 +14,7 @@ import {
 } from "react-native";
 import { logOutDB } from "../redux/auth/operations";
 import { db } from "../firebase/config";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, where } from "firebase/firestore";
 import DeleteSvg from "../assets/images/delete.svg";
 import LogOutSvg from "../assets/images/log-out.svg";
 import AvatarImage from "../assets/images/avatar.png";
@@ -27,16 +27,17 @@ export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
   const [commentsCount, setCommentsCount] = useState([]);
   const navigation = useNavigation();
-  const login = useSelector(selectUserLogin);
+  const { login, userId } = useSelector(selectUser);
   const dispatch = useDispatch();
 
   const logOut = () => {
     dispatch(logOutDB());
   };
 
-  const getAllPosts = async () => {
+  const getOwnPosts = async () => {
     try {
-      const snapshot = await getDocs(collection(db, "posts"));
+      const q = query(collection(db, "posts"), where("userId", "==", userId));
+      const snapshot = await getDocs(q);
       snapshot.forEach((doc) => {
         getAllCommentsCount(doc.id);
         setPosts((posts) => [
@@ -79,7 +80,7 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    getAllPosts();
+    getOwnPosts();
   }, []);
 
   return (

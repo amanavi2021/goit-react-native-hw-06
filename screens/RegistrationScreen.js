@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUser } from "../redux/auth/selectors";
+// import { selectUser } from "../redux/auth/selectors";
 import {
   StyleSheet,
   Text,
@@ -16,14 +16,18 @@ import {
   Image,
   Dimensions,
 } from "react-native";
+import * as ImagePicker from "expo-image-picker";
 import { registerDB } from "../redux/auth/operations";
 import { onAuthStateChanged } from "firebase/auth";
+import { storage, db } from "../firebase/config";
+import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import AddSvg from "../assets/images/add.svg";
 
 const initialState = {
   login: "",
   email: "",
   password: "",
+  photo: null,
 };
 
 export default function RegistrationScreen() {
@@ -33,15 +37,19 @@ export default function RegistrationScreen() {
   const [hasFocusLogin, setHasFocusLogin] = useState(false);
   const [hasFocusEmail, setHasFocusEmail] = useState(false);
   const [hasFocusPassword, setHasFocusPassword] = useState(false);
-  const [user, setUser] = useState(null);
+  // const [user, setUser] = useState(null);
+  const [photo, setPhoto] = useState(null);
+  const [photoURL, setPhotoURL] = useState(null);
 
   const navigation = useNavigation();
   const dispatch = useDispatch();
-  const { userId } = useSelector(selectUser);
 
   const handleSubmit = () => {
     keyboardHide();
-    dispatch(registerDB(state));
+    uploadPhotoToServer();
+    console.log({ ...state, photoURL });
+
+    dispatch(registerDB({ ...state, photoURL }));
 
     const authStateChanged = async (onChange = () => {}) => {
       onAuthStateChanged(async (user) => {
@@ -74,6 +82,34 @@ export default function RegistrationScreen() {
 
   const toggleShowPassword = () => {
     setIsShowPassword(!showPassword);
+    console.log("you here");
+  };
+
+  const pickImageAsync = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      allowEditing: true,
+      quality: 1,
+    });
+    const currentPhoto = result.assets[0].uri;
+    // console.log(result.assets[0].uri);
+    setPhoto(currentPhoto);
+  };
+
+  const uploadPhotoToServer = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const uniqueUserID = Date.now().toString();
+    const storageRef = ref(storage, `userImages/${uniqueUserID}`);
+
+    await uploadBytes(storageRef, file).then((snapshot) => {});
+    await getDownloadURL(ref(storage, `userImages/${uniqueUserID}`))
+      .then((url) => {
+        console.log("url", url);
+        setPhotoURL(url);
+      })
+      .catch((error) => {
+        console.log("err", error);
+      });
   };
 
   return (
@@ -84,8 +120,10 @@ export default function RegistrationScreen() {
         >
           <View style={styles.wrapper}>
             <View style={styles.avatarWrapper}>
-              <Image style={styles.avatar} />
-              <AddSvg style={styles.addIcon} width={25} height={25} />
+              <Image source={{ uri: photo }} style={styles.avatar} />
+              <TouchableOpacity activeOpacity={0.8} onPress={pickImageAsync}>
+                <AddSvg style={styles.addIcon} width={25} height={25} />
+              </TouchableOpacity>
             </View>
             <View
               style={{
@@ -290,9 +328,14 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     marginLeft: "auto",
   },
+
   addIcon: {
-    position: "absolute",
-    right: 132,
-    top: 20,
+    // position: "absolute",
+    // right: 132,
+    // top: 20,
+    marginLeft: 235,
+    // marginTop: 30,
+    // borderWidth: 1,
+    // borderColor: "#tomato",
   },
 });
