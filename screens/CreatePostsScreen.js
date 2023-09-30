@@ -72,6 +72,13 @@ export default function CreatePostsScreen() {
     navigation.navigate("Default");
   };
 
+  const handleDelete = () => {
+    setPhoto(null);
+    setPhotoURL(null);
+    setName("");
+    setPlace("");
+  };
+
   const uploadPhotoToServer = async () => {
     const response = await fetch(photo);
     const file = await response.blob();
@@ -172,6 +179,7 @@ export default function CreatePostsScreen() {
             }}
             placeholder="Назва..."
             placeholderTextColor={"#BDBDBD"}
+            value={name}
             onChangeText={(value) => setName(value)}
           />
         </View>
@@ -183,6 +191,7 @@ export default function CreatePostsScreen() {
             }}
             placeholder="Місцевість.."
             placeholderTextColor={"#BDBDBD"}
+            value={place}
             onChangeText={(value) => setPlace(value)}
           />
         </View>
@@ -202,9 +211,15 @@ export default function CreatePostsScreen() {
           </Text>
         </TouchableOpacity>
 
-        <View style={styles.trashSvgWrapper}>
+        {/* <View style={styles.trashSvgWrapper}> */}
+        <TouchableOpacity
+          style={styles.trashSvgWrapper}
+          activeOpacity={0.8}
+          onPress={handleDelete}
+        >
           <TrashSvg />
-        </View>
+        </TouchableOpacity>
+        {/* </View> */}
       </View>
     </View>
   );
