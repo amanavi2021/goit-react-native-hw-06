@@ -46,7 +46,8 @@ export default function CommentsScreen({ route }) {
   const createComment = async () => {
     const docRef = doc(db, "posts", postId);
     const docSnap = await getDoc(docRef);
-    const newComment = { comment, login };
+    const date = getDate();
+    const newComment = { comment, login, date };
 
     if (docSnap.exists()) {
       const commentRef = addDoc(
@@ -61,6 +62,26 @@ export default function CommentsScreen({ route }) {
     setComment("");
   };
 
+  const getDate = () => {
+    const today = new Date();
+
+    const options = {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    };
+    // options.timeZone = "UTC";
+    // options.timeZoneName = "short";
+
+    const now = today.toLocaleString("uk-UA", options);
+    const time = today.toLocaleTimeString("uk-UA").slice(0, -3);
+    const date = now + " | " + time;
+    // console.log("date", date);
+    // console.log("now", now);
+    // console.log("time", time);
+    return date;
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.takePhotoContainer}>
@@ -73,7 +94,8 @@ export default function CommentsScreen({ route }) {
           <View style={styles.commentWrapper}>
             <Text>{item.login}</Text>
             <View style={styles.textWrapper}>
-              <Text style={styles.photoTitle}>{item.comment}</Text>
+              <Text style={styles.commentText}>{item.comment}</Text>
+              <Text style={styles.date}>{item.date}</Text>
             </View>
           </View>
         )}
@@ -139,7 +161,20 @@ const styles = StyleSheet.create({
     gap: 16,
   },
   textWrapper: {
+    width: "100%",
     backgroundColor: "#F6F6F6",
     padding: 16,
+    flexDirection: "column",
+    gap: 8,
+  },
+  commentText: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 13,
+    color: "#212121",
+  },
+  date: {
+    fontFamily: "Roboto-Regular",
+    fontSize: 10,
+    color: "#BDBDBD",
   },
 });
