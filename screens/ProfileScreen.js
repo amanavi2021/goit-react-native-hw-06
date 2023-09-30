@@ -39,13 +39,11 @@ export default function ProfileScreen() {
       const snapshot = await getDocs(collection(db, "posts"));
       snapshot.forEach((doc) => {
         getAllCommentsCount(doc.id);
-        // console.log("commentsCount", commentsCount);
         setPosts((posts) => [
           ...posts,
           { ...doc.data(), id: doc.id, likes: 0 },
         ]);
       });
-      // console.log("sum", commentsCount);
     } catch (error) {
       console.log(error);
       throw error;
@@ -70,8 +68,6 @@ export default function ProfileScreen() {
       console.log(error);
       throw error;
     }
-    // console.log("comments", comments);
-    // console.log("length", comments.length);
   };
 
   const getCount = (id) => {
@@ -80,7 +76,6 @@ export default function ProfileScreen() {
       return findingPost.count;
     }
     return 0;
-    // return commentsCount.find((post) => post.id === `${id}`).count;
   };
 
   useEffect(() => {

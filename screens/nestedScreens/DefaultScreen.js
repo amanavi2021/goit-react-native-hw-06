@@ -15,18 +15,48 @@ import MessageSvg from "../../assets/images/message-circle.svg";
 
 export default function DefaultScreen({ route }) {
   const [posts, setPosts] = useState([]);
+  const [commentsCount, setCommentsCount] = useState([]);
   const navigation = useNavigation();
 
   const getAllPosts = async () => {
     try {
       const snapshot = await getDocs(collection(db, "posts"));
       snapshot.forEach((doc) => {
+        getAllCommentsCount(doc.id);
         setPosts((posts) => [...posts, { ...doc.data(), id: doc.id }]);
       });
     } catch (error) {
       console.log(error);
       throw error;
     }
+  };
+
+  const getAllCommentsCount = async (id) => {
+    let comments = [];
+    try {
+      const snapshot = await getDocs(collection(db, `posts/${id}/comments`));
+      snapshot.forEach((doc) => {
+        comments.push({ ...doc.data() });
+      });
+      await setCommentsCount((prevState) => [
+        ...prevState,
+        {
+          id,
+          count: comments.length,
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
+  const getCount = (id) => {
+    const findingPost = commentsCount.find((post) => post.id === `${id}`);
+    if (findingPost) {
+      return findingPost.count;
+    }
+    return 0;
   };
 
   useEffect(() => {
@@ -54,10 +84,12 @@ export default function DefaultScreen({ route }) {
                     })
                   }
                 >
-                  <MessageSvg />
+                  <MessageSvg
+                    fill={getCount(item.id) ? "#FF6C00" : "transparent"}
+                  />
                 </TouchableOpacity>
 
-                <Text style={styles.commentsCount}>0</Text>
+                <Text style={styles.commentsCount}>{getCount(item.id)}</Text>
               </View>
               <View style={styles.locationWrapper}>
                 <TouchableOpacity
