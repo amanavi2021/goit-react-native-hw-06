@@ -31,12 +31,10 @@ export default function CommentsScreen({ route }) {
       const snapshot = await getDocs(
         collection(db, `posts/${docRef.id}/comments`)
       );
-      snapshot.forEach((doc) => {
-        setAllComments((comments) => [
-          ...comments,
-          { ...doc.data(), id: doc.id },
-        ]);
-      });
+
+      setAllComments(
+        snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
     } catch (error) {
       console.log(error);
       throw error;
@@ -44,22 +42,24 @@ export default function CommentsScreen({ route }) {
   };
 
   const createComment = async () => {
-    const docRef = doc(db, "posts", postId);
-    const docSnap = await getDoc(docRef);
-    const date = getDate();
-    const newComment = { comment, login, date };
+    if (comment) {
+      const docRef = doc(db, "posts", postId);
+      const docSnap = await getDoc(docRef);
+      const date = getDate();
+      const newComment = { comment, login, date };
 
-    if (docSnap.exists()) {
-      const commentRef = addDoc(
-        collection(db, `posts/${docRef.id}/comments`),
-        newComment
-      );
-    } else {
-      console.log("No such document!");
+      if (docSnap.exists()) {
+        const commentRef = addDoc(
+          collection(db, `posts/${docRef.id}/comments`),
+          newComment
+        );
+      } else {
+        console.log("No such document!");
+      }
+
+      setAllComments((prevComments) => [...prevComments, newComment]);
+      setComment("");
     }
-
-    setAllComments((prevComments) => [...prevComments, newComment]);
-    setComment("");
   };
 
   const getDate = () => {
@@ -70,15 +70,10 @@ export default function CommentsScreen({ route }) {
       month: "long",
       day: "numeric",
     };
-    // options.timeZone = "UTC";
-    // options.timeZoneName = "short";
 
     const now = today.toLocaleString("uk-UA", options);
     const time = today.toLocaleTimeString("uk-UA").slice(0, -3);
     const date = now + " | " + time;
-    // console.log("date", date);
-    // console.log("now", now);
-    // console.log("time", time);
     return date;
   };
 

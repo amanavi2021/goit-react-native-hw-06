@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 
 import {
   View,
@@ -17,15 +17,24 @@ import MessageSvg from "../../assets/images/message-circle.svg";
 export default function DefaultScreen({ route }) {
   const [posts, setPosts] = useState([]);
   const [commentsCount, setCommentsCount] = useState([]);
+  const isFocused = useIsFocused();
   const navigation = useNavigation();
 
   const getAllPosts = async () => {
+    // setPosts([]);
     try {
       const snapshot = await getDocs(collection(db, "posts"));
-      snapshot.forEach((doc) => {
-        getAllCommentsCount(doc.id);
-        setPosts((posts) => [...posts, { ...doc.data(), id: doc.id }]);
-      });
+      // snapshot.forEach((doc) => {
+      //   // console.log("with post", posts);
+      //   getAllCommentsCount(doc.id);
+      setPosts(
+        // (posts) => [...posts, { ...doc.data(), id: doc.id }]);
+        snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      );
+
+      // setAllComments(
+      //   snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      // );
     } catch (error) {
       console.log(error);
       throw error;
@@ -33,19 +42,30 @@ export default function DefaultScreen({ route }) {
   };
 
   const getAllCommentsCount = async (id) => {
-    let comments = [];
+    // let comments = [];
     try {
       const snapshot = await getDocs(collection(db, `posts/${id}/comments`));
-      snapshot.forEach((doc) => {
-        comments.push({ ...doc.data() });
-      });
-      await setCommentsCount((prevState) => [
+      // snapshot.forEach((doc) => {
+      //   comments.push({ ...doc.data() });
+      // });
+      // await setCommentsCount((prevState) => [
+      //   ...prevState,
+      //   {
+      //     id,
+      //     count: comments.length,
+      //   },
+      // ]);
+      // setCommentsCount(
+      const comments = snapshot.docs.map((doc) => ({ ...doc.data(), id }));
+      setCommentsCount((prevState) => [
         ...prevState,
         {
           id,
           count: comments.length,
         },
       ]);
+
+      // );
     } catch (error) {
       console.log(error);
       throw error;
@@ -61,8 +81,11 @@ export default function DefaultScreen({ route }) {
   };
 
   useEffect(() => {
-    getAllPosts();
-  }, []);
+    if (isFocused) {
+      console.log("get new posts", commentsCount);
+      getAllPosts();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>

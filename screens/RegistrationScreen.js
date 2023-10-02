@@ -22,6 +22,7 @@ import { onAuthStateChanged } from "firebase/auth";
 import { storage, db } from "../firebase/config";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import AddSvg from "../assets/images/add.svg";
+import DeleteSvg from "../assets/images/delete.svg";
 
 const initialState = {
   login: "",
@@ -44,18 +45,19 @@ export default function RegistrationScreen() {
   const navigation = useNavigation();
   const dispatch = useDispatch();
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     keyboardHide();
-    uploadPhotoToServer();
+    await uploadPhotoToServer();
+    console.log(photoURL);
     console.log({ ...state, photoURL });
 
     dispatch(registerDB({ ...state, photoURL }));
 
-    const authStateChanged = async (onChange = () => {}) => {
-      onAuthStateChanged(async (user) => {
-        onChange(user);
-      });
-    };
+    // const authStateChanged = async (onChange = () => {}) => {
+    //   onAuthStateChanged(async (user) => {
+    //     onChange(user);
+    //   });
+    // };
 
     setState(initialState);
   };
@@ -86,13 +88,17 @@ export default function RegistrationScreen() {
   };
 
   const pickImageAsync = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      allowEditing: true,
-      quality: 1,
-    });
-    const currentPhoto = result.assets[0].uri;
-    // console.log(result.assets[0].uri);
-    setPhoto(currentPhoto);
+    if (photo) {
+      setPhoto(null);
+    } else {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        allowEditing: true,
+        quality: 1,
+      });
+      const currentPhoto = result.assets[0].uri;
+      // console.log(result.assets[0].uri);
+      setPhoto(currentPhoto);
+    }
   };
 
   const uploadPhotoToServer = async () => {
@@ -122,7 +128,11 @@ export default function RegistrationScreen() {
             <View style={styles.avatarWrapper}>
               <Image source={{ uri: photo }} style={styles.avatar} />
               <TouchableOpacity activeOpacity={0.8} onPress={pickImageAsync}>
-                <AddSvg style={styles.addIcon} width={25} height={25} />
+                {photo ? (
+                  <DeleteSvg style={styles.addIcon} />
+                ) : (
+                  <AddSvg style={styles.addIcon} />
+                )}
               </TouchableOpacity>
             </View>
             <View

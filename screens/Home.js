@@ -10,7 +10,9 @@ import ProfileScreen from "./ProfileScreen";
 import DefaultScreen from "./nestedScreens/DefaultScreen";
 import GridSvg from "../assets/images/grid.svg";
 import UserSvg from "../assets/images/user.svg";
+import UserWhiteSvg from "../assets/images/user-white.svg";
 import UnionSvg from "../assets/images/union.svg";
+import UnionWhiteSvg from "../assets/images/union-white.svg";
 import ArrowSvg from "../assets/images/arrow-left.svg";
 import LogOutSvg from "../assets/images/log-out.svg";
 
@@ -31,19 +33,28 @@ export default function Home() {
           let iconName;
           if (route.name === "Default") {
             iconName = "";
-            return <GridSvg />;
+            return (
+              <View style={focused && styles.unionSvgWrapper}>
+                <GridSvg />
+              </View>
+            );
           }
           if (route.name === "CreatePosts") {
             iconName = "";
             return (
-              <View style={styles.unionSvgWrapper}>
-                <UnionSvg />
+              <View style={focused && styles.unionSvgWrapper}>
+                {focused ? <UnionWhiteSvg /> : <UnionSvg />}
               </View>
             );
           }
           if (route.name === "Profile") {
             iconName = "";
-            return <UserSvg />;
+            return (
+              <View style={focused && styles.unionSvgWrapper}>
+                {focused ? <UserWhiteSvg /> : <UserSvg />}
+                {/* <UserSvg /> */}
+              </View>
+            );
           }
         },
         tabBarLabelStyle: {

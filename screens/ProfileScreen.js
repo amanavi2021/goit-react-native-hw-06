@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useIsFocused } from "@react-navigation/native";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUser } from "../redux/auth/selectors";
 import {
@@ -27,7 +27,8 @@ export default function ProfileScreen() {
   const [posts, setPosts] = useState([]);
   const [commentsCount, setCommentsCount] = useState([]);
   const navigation = useNavigation();
-  const { login, userId } = useSelector(selectUser);
+  const isFocused = useIsFocused();
+  const { login, userId, photo } = useSelector(selectUser);
   const dispatch = useDispatch();
 
   const logOut = () => {
@@ -38,13 +39,21 @@ export default function ProfileScreen() {
     try {
       const q = query(collection(db, "posts"), where("userId", "==", userId));
       const snapshot = await getDocs(q);
-      snapshot.forEach((doc) => {
-        getAllCommentsCount(doc.id);
-        setPosts((posts) => [
-          ...posts,
-          { ...doc.data(), id: doc.id, likes: 0 },
-        ]);
-      });
+      setPosts(
+        // (posts) => [
+        //   ...posts,
+        //   { ...doc.data(), id: doc.id, likes: 0 },
+        // ]);    }
+        // snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        snapshot.docs.map((doc) => {
+          getAllCommentsCount(doc.id);
+          return { ...doc.data(), id: doc.id };
+        })
+      );
+      // console.log(
+      //   "data profile",
+      //   snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+      // );
     } catch (error) {
       console.log(error);
       throw error;
@@ -52,13 +61,21 @@ export default function ProfileScreen() {
   };
 
   const getAllCommentsCount = async (id) => {
-    let comments = [];
+    // let comments = [];
     try {
       const snapshot = await getDocs(collection(db, `posts/${id}/comments`));
-      snapshot.forEach((doc) => {
-        comments.push({ ...doc.data() });
-      });
-      await setCommentsCount((prevState) => [
+      // snapshot.forEach((doc) => {
+      //   comments.push({ ...doc.data() });
+      // });
+      // await setCommentsCount((prevState) => [
+      //   ...prevState,
+      //   {
+      //     id,
+      //     count: comments.length,
+      //   },
+      // ]);
+      const comments = snapshot.docs.map((doc) => ({ ...doc.data(), id }));
+      setCommentsCount((prevState) => [
         ...prevState,
         {
           id,
@@ -80,14 +97,20 @@ export default function ProfileScreen() {
   };
 
   useEffect(() => {
-    getOwnPosts();
-  }, []);
+    if (isFocused) {
+      getOwnPosts();
+    }
+  }, [isFocused]);
 
   return (
     <View style={styles.container}>
       <View style={styles.wrapper}>
         <View style={styles.avatarWrapper}>
-          <Image style={styles.avatar} source={AvatarImage} />
+          <Image
+            style={styles.avatar}
+            // source={AvatarImage}
+            source={{ uri: photo }}
+          />
           <DeleteSvg style={styles.deleteIcon} width={37} height={37} />
           <TouchableOpacity activeOpacity={0.8} onPress={logOut}>
             <LogOutSvg style={styles.logOutIcon} />

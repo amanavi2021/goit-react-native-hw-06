@@ -24,7 +24,7 @@ export const registerDB =
         photoURL: photoURL,
       });
 
-      // console.log("photo reg", photoURL);
+      console.log("photo reg", photoURL);
 
       const { uid, displayName } = await auth.currentUser;
       // console.log("auth", auth.currentUser);
