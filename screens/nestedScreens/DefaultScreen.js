@@ -29,7 +29,10 @@ export default function DefaultScreen({ route }) {
       //   getAllCommentsCount(doc.id);
       setPosts(
         // (posts) => [...posts, { ...doc.data(), id: doc.id }]);
-        snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+        snapshot.docs.map((doc) => {
+          getAllCommentsCount(doc.id);
+          return { ...doc.data(), id: doc.id };
+        })
       );
 
       // setAllComments(
@@ -64,8 +67,6 @@ export default function DefaultScreen({ route }) {
           count: comments.length,
         },
       ]);
-
-      // );
     } catch (error) {
       console.log(error);
       throw error;

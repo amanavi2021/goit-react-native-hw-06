@@ -37,23 +37,15 @@ export default function ProfileScreen() {
 
   const getOwnPosts = async () => {
     try {
+      console.log("get profile posts");
       const q = query(collection(db, "posts"), where("userId", "==", userId));
       const snapshot = await getDocs(q);
       setPosts(
-        // (posts) => [
-        //   ...posts,
-        //   { ...doc.data(), id: doc.id, likes: 0 },
-        // ]);    }
-        // snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
         snapshot.docs.map((doc) => {
           getAllCommentsCount(doc.id);
           return { ...doc.data(), id: doc.id };
         })
       );
-      // console.log(
-      //   "data profile",
-      //   snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-      // );
     } catch (error) {
       console.log(error);
       throw error;
@@ -61,19 +53,9 @@ export default function ProfileScreen() {
   };
 
   const getAllCommentsCount = async (id) => {
-    // let comments = [];
     try {
       const snapshot = await getDocs(collection(db, `posts/${id}/comments`));
-      // snapshot.forEach((doc) => {
-      //   comments.push({ ...doc.data() });
-      // });
-      // await setCommentsCount((prevState) => [
-      //   ...prevState,
-      //   {
-      //     id,
-      //     count: comments.length,
-      //   },
-      // ]);
+
       const comments = snapshot.docs.map((doc) => ({ ...doc.data(), id }));
       setCommentsCount((prevState) => [
         ...prevState,
@@ -148,6 +130,7 @@ export default function ProfileScreen() {
                   >
                     <MessageSvg
                       fill={getCount(item.id) ? "#FF6C00" : "transparent"}
+                      // fill={item.length ? "#FF6C00" : "transparent"}
                       // stroke={getCount(item.id) ? "#FF6C00" : "transparent"}
                     />
                   </TouchableOpacity>

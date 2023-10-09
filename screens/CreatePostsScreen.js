@@ -50,24 +50,38 @@ export default function CreatePostsScreen() {
       // console.log("status location", status);
       if (status !== "granted") {
         // console.log("Permission to access location was denied");
+        //
+        const location = await Location
+          .getCurrentPositionAsync
+          // {
+          //   accuracy: Location.Accuracy.Highest,
+          //   maximumAge: 10000,
+          // }
+          // {}
+          ();
+        setLatitude(location.coords.latitude);
+        setLongitude(location.coords.longitude);
+
+        //
       }
     })();
   }, []);
 
   const sendPost = async () => {
     // uploadPhotoToServer();
-    uploadPostToServer();
 
     const location = await Location
       .getCurrentPositionAsync
       // {
       //   accuracy: Location.Accuracy.Highest,
       //   maximumAge: 10000,
-      // }
+      //  }
       // {}
       ();
     setLatitude(location.coords.latitude);
     setLongitude(location.coords.longitude);
+
+    await uploadPostToServer();
 
     navigation.navigate("Default");
   };
@@ -97,6 +111,7 @@ export default function CreatePostsScreen() {
 
   const uploadPostToServer = async () => {
     await uploadPhotoToServer();
+    console.log("photo", photoURL);
     if (photoURL) {
       const post = {
         photoURL,
